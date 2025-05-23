@@ -1,151 +1,110 @@
-import streamlit as st
-import pandas as pd
-import math
-from pathlib import Path
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>秘密保持契約書（NDA）</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+        }
+        header {
+            background-color: #C8102E; /* UBS 红色 */
+            color: white;
+            padding: 10px 20px;
+        }
+        .logo {
+            height: 50px;
+            vertical-align: middle;
+        }
+        h1 {
+            text-align: center;
+        }
+        section {
+            margin: 20px 0;
+        }
+        footer {
+            text-align: center;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
 
-# Set the title and favicon that appear in the Browser's tab bar.
-st.set_page_config(
-    page_title='GDP dashboard',
-    page_icon=':earth_americas:', # This is an emoji shortcode. Could be a URL too.
-)
+<header>
+    <img src="logo.png" alt="UBS Logo" class="logo">
+    <h1>秘密保持契約書（NDA）</h1>
+</header>
 
-# -----------------------------------------------------------------------------
-# Declare some useful functions.
+<section>
+    <h2>第5回FIREプロジェクトに関する情報開示</h2>
+    <p>本契約は、以下の当事者間で締結される。</p>
+    <p>
+        1. 当事者<br>
+        甲（情報提供者）：UBSのビジネス(株)<br>
+        住所：東京 ・ 千代田区大手町 1-2-1<br>
+        代表者名（任意）：五老 晴信<br>
+        乙（受領者／個人投資家）：<br>
+        住所：
+    </p>
 
-@st.cache_data
-def get_gdp_data():
-    """Grab GDP data from a CSV file.
+    <h2>2. 目的</h2>
+    <p>本契約は、甲が実施する「第5回FIREプロジェクト（PTS株式投資案件）」に関して、乙に提供する一切の非公開情報について、乙の秘密保持義務を明確にすることを目的とする。</p>
 
-    This uses caching to avoid having to read the file every time. If we were
-    reading from an HTTP endpoint instead of a file, it's a good idea to set
-    a maximum age to the cache with the TTL argument: @st.cache_data(ttl='1d')
-    """
+    <h2>3. 秘密情報の定義</h2>
+    <p>本契約における「秘密情報」とは、甲が乙に対して開示する以下の情報を含む全情報を指す。</p>
+    <ul>
+        <li>(1) プロジェクトの内容、対象銘柄、投資ロジック、取引スキーム、日程</li>
+        <li>(2) 過去実績、検証資料、戦略概要、事業構成、収支シミュレーション</li>
+        <li>(3) 参加条件、運用ルール、申し込み方法、各種説明資料</li>
+        <li>(4) 提携先企業の名称や実在に関する情報</li>
+        <li>(5) ミーティング、口頭説明、チャット、DM、プレゼン資料等を通じて伝えられた一切の情報</li>
+        <li>(6) 甲が秘密情報として指定したその他全ての情報</li>
+    </ul>
 
-    # Instead of a CSV on disk, you could read from an HTTP endpoint here too.
-    DATA_FILENAME = Path(__file__).parent/'data/gdp_data.csv'
-    raw_gdp_df = pd.read_csv(DATA_FILENAME)
+    <h2>4. 秘密情報の取扱い</h2>
+    <p>乙は以下の義務を負う。</p>
+    <ol>
+        <li>(1) 秘密情報をいかなる第三者に開示・漏洩してはならない</li>
+        <li>(2) 秘密情報の複製、録音、転送、引用、要約、公開を行ってはならない</li>
+        <li>(3) SNS、ブログ、YouTube等を含む一切のメディアに情報を発信してはならない</li>
+        <li>(4) 提携先企業の名称・存在を第三者に伝えてはならない（黙秘義務）</li>
+        <li>(5) 秘密情報を甲との本プロジェクトの検討目的以外で利用してはならない</li>
+        <li>(6) 他人に情報を共有する場合は、甲の書面による事前承諾を得ること</li>
+    </ol>
 
-    MIN_YEAR = 1960
-    MAX_YEAR = 2022
+    <h2>5. 除外情報</h2>
+    <p>次に該当する情報は秘密情報に含まれない。</p>
+    <ul>
+        <li>(1) 開示時点で公知の情報</li>
+        <li>(2) 開示後、乙の責によらず公知となった情報</li>
+        <li>(3) 乙が開示前から正当に保有していたと証明できる情報</li>
+        <li>(4) 法令または裁判所の命令により開示を義務付けられた場合(この場合は甲に事前通知）</li>
+    </ul>
 
-    # The data above has columns like:
-    # - Country Name
-    # - Country Code
-    # - [Stuff I don't care about]
-    # - GDP for 1960
-    # - GDP for 1961
-    # - GDP for 1962
-    # - ...
-    # - GDP for 2022
-    #
-    # ...but I want this instead:
-    # - Country Name
-    # - Country Code
-    # - Year
-    # - GDP
-    #
-    # So let's pivot all those year-columns into two: Year and GDP
-    gdp_df = raw_gdp_df.melt(
-        ['Country Code'],
-        [str(x) for x in range(MIN_YEAR, MAX_YEAR + 1)],
-        'Year',
-        'GDP',
-    )
+    <h2>6. 契約期間</h2>
+    <p>本契約の有効期間は、契約締結日より2年間とする。ただし、契約期間中に開示された情報は、開示日から5年間、秘密保持義務を存続させる。</p>
 
-    # Convert years from string to integers
-    gdp_df['Year'] = pd.to_numeric(gdp_df['Year'])
+    <h2>7. 情報の返還・削除</h2>
+    <p>甲が求めた場合、乙は秘密情報を遅滞なく返還または完全に消去し、証明書または報告書によりその旨を報告する。</p>
 
-    return gdp_df
+    <h2>8. 損害賠償</h2>
+    <p>乙が本契約に違反し、甲に損害を与えた場合、乙は直接損害に加え、間接損害（営業機会の逸失、社会的信用の棄損等）を含めて全てを賠償する。</p>
 
-gdp_df = get_gdp_data()
+    <h2>9. 準拠法および管轄</h2>
+    <p>本契約は日本法を準拠法とし、本契約に関して生じたすべての紛争については、甲の所在地を管轄する地方裁判所を第一審の専属的合意管轄裁判所とする。</p>
+</section>
 
-# -----------------------------------------------------------------------------
-# Draw the actual page
+<footer>
+    <p>【契約締結日】</p>
+    <p>令和 7 年    月     日</p>
+    <p>【甲（情報提供者）】</p>
+    <p>氏名（法人の場合は会社名）：UBSのビジネス（株）</p>
+    <p>署名：五老 晴信</p>
+    <p>【乙（受領者／個人投資家）】 氏名：<br>署名：</p>
+</footer>
 
-# Set the title that appears at the top of the page.
-'''
-# :earth_americas: GDP dashboard
-
-Browse GDP data from the [World Bank Open Data](https://data.worldbank.org/) website. As you'll
-notice, the data only goes to 2022 right now, and datapoints for certain years are often missing.
-But it's otherwise a great (and did I mention _free_?) source of data.
-'''
-
-# Add some spacing
-''
-''
-
-min_value = gdp_df['Year'].min()
-max_value = gdp_df['Year'].max()
-
-from_year, to_year = st.slider(
-    'Which years are you interested in?',
-    min_value=min_value,
-    max_value=max_value,
-    value=[min_value, max_value])
-
-countries = gdp_df['Country Code'].unique()
-
-if not len(countries):
-    st.warning("Select at least one country")
-
-selected_countries = st.multiselect(
-    'Which countries would you like to view?',
-    countries,
-    ['DEU', 'FRA', 'GBR', 'BRA', 'MEX', 'JPN'])
-
-''
-''
-''
-
-# Filter the data
-filtered_gdp_df = gdp_df[
-    (gdp_df['Country Code'].isin(selected_countries))
-    & (gdp_df['Year'] <= to_year)
-    & (from_year <= gdp_df['Year'])
-]
-
-st.header('GDP over time', divider='gray')
-
-''
-
-st.line_chart(
-    filtered_gdp_df,
-    x='Year',
-    y='GDP',
-    color='Country Code',
-)
-
-''
-''
-
-
-first_year = gdp_df[gdp_df['Year'] == from_year]
-last_year = gdp_df[gdp_df['Year'] == to_year]
-
-st.header(f'GDP in {to_year}', divider='gray')
-
-''
-
-cols = st.columns(4)
-
-for i, country in enumerate(selected_countries):
-    col = cols[i % len(cols)]
-
-    with col:
-        first_gdp = first_year[first_year['Country Code'] == country]['GDP'].iat[0] / 1000000000
-        last_gdp = last_year[last_year['Country Code'] == country]['GDP'].iat[0] / 1000000000
-
-        if math.isnan(first_gdp):
-            growth = 'n/a'
-            delta_color = 'off'
-        else:
-            growth = f'{last_gdp / first_gdp:,.2f}x'
-            delta_color = 'normal'
-
-        st.metric(
-            label=f'{country} GDP',
-            value=f'{last_gdp:,.0f}B',
-            delta=growth,
-            delta_color=delta_color
-        )
+</body>
+</html>

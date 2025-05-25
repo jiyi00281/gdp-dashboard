@@ -1,33 +1,72 @@
-{
-  "name": "Python 3",
-  // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-  "image": "mcr.microsoft.com/devcontainers/python:1-3.11-bullseye",
-  "customizations": {
-    "codespaces": {
-      "openFiles": [
-        "README.md",
-        "streamlit_app.py"
-      ]
-    },
-    "vscode": {
-      "settings": {},
-      "extensions": [
-        "ms-python.python",
-        "ms-python.vscode-pylance"
-      ]
-    }
-  },
-  "updateContentCommand": "[ -f packages.txt ] && sudo apt update && sudo apt upgrade -y && sudo xargs apt install -y <packages.txt; [ -f requirements.txt ] && pip3 install --user -r requirements.txt; pip3 install --user streamlit; echo '✅ Packages installed and Requirements met'",
-  "postAttachCommand": {
-    "server": "streamlit run streamlit_app.py --server.enableCORS false --server.enableXsrfProtection false"
-  },
-  "portsAttributes": {
-    "8501": {
-      "label": "Application",
-      "onAutoForward": "openPreview"
-    }
-  },
-  "forwardPorts": [
-    8501
-  ]
-}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>德州扑克胜算提高工具</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 40px; }
+        input { margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>德州扑克胜算提高工具</h1>
+
+    <div>
+        <h2>输入玩家手牌</h2>
+        <input type="text" id="myHand" placeholder="例如: A♥ K♠">
+    </div>
+    
+    <div>
+        <h2>输入对手手牌</h2>
+        <input type="text" id="opponentHand" placeholder="例如: Q♦ J♦">
+    </div>
+
+    <div>
+        <h2>输入公共牌</h2>
+        <input type="text" id="communityCards" placeholder="例如: 10♥ 9♣ 8♠">
+    </div>
+
+    <button onclick="calculateWinProbability()">计算胜算概率</button>
+
+    <h2 id="result"></h2>
+
+    <script>
+        function parseHand(hand) {
+            return hand.split(' ').map(card => {
+                const value = card.slice(0, -1);
+                const suit = card.slice(-1);
+                return { value, suit };
+            });
+        }
+
+        function evaluateHand(hand, community) {
+            const totalCards = [...hand, ...community];
+            const values = totalCards.map(card => card.value);
+            const uniqueValues = [...new Set(values)];
+            const handScore = totalCards.length; // 为基础示例，仅统计牌数
+
+            return { uniqueCount: uniqueValues.length, handScore };
+        }
+
+        function calculateWinProbability() {
+            const myHand = parseHand(document.getElementById('myHand').value);
+            const opponentHand = parseHand(document.getElementById('opponentHand').value);
+            const communityCards = parseHand(document.getElementById('communityCards').value);
+
+            const myEvaluation = evaluateHand(myHand, communityCards);
+            const opponentEvaluation = evaluateHand(opponentHand, communityCards);
+
+            let result;
+            if (myEvaluation.handScore > opponentEvaluation.handScore) {
+                result = `你胜出！ (${myEvaluation.handScore} 对 ${opponentEvaluation.handScore})`;
+            } else if (myEvaluation.handScore < opponentEvaluation.handScore) {
+                result = `对手胜出！ (${opponentEvaluation.handScore} 对 ${myEvaluation.handScore})`;
+            } else {
+                result = "平局！";
+            }
+
+            document.getElementById('result').innerText = result;
+        }
+    </script>
+</body>
+</html>
